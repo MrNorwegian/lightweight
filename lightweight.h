@@ -86,6 +86,10 @@ extern "C" {
 #define SERVERNAMELENGTH 100
 #define TOPICLEN 250
 
+/* Defines for CTCP reply */
+#define VERSION "Lightweight v1.0"
+#define FINGER "Do it harder!"
+
 /* Structs. */
 
 /* the struct required to hold multiple auths for a single account */
@@ -211,6 +215,7 @@ extern "C" {
   int CheckAuthLevel(struct user *user_ptr, unsigned char level);
   void MessageToUser(struct user *user, char *message, ...);
   void NoticeToUser(struct user *user, char *message, ...);
+  void SendCTCPReply(struct user *user, char *message, ...);
 
 /* nick.c */
   void UserNickCreation(char *numeric, char *nick, char isoper);
@@ -234,6 +239,8 @@ extern "C" {
 
 /* privmsg.c */
   void ProcessMessage(char *numeric, char *text);
+  char *StripCTCP(char *text);
+  char *GetTime();
 
 /* error.c */
   void Error(int ErrorType, char *reason, ...);

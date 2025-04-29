@@ -2,7 +2,7 @@
  *
  * lightweight - a minimalistic chanserv for ircu's p10-protocol
  *
- * copyright 2002 by Rasmus Have & Raimo Nikkil‰ & David Mansell
+ * copyright 2002 by Rasmus Have & Raimo Nikkil√§ & David Mansell
  *
  * $Id: privmsg.c,v 1.51 2004/08/18 16:07:50 froo Exp $
  *
@@ -50,8 +50,26 @@ void ProcessMessage(char *numeric, char *text)
 #endif
 
   /* Firstly firstly, we need to take care of CTCP commands. */
+
   if (*text == '\001') {
-    /* Handle CTCP's here. */
+
+    /* Strip the CTCP command off the front and back of the string */
+    command = StripCTCP(text);
+
+    if (!Strncmp(command, "PING", 4)) {
+      /* Get the argument */
+      char *ping_arg = command + 5;
+      SendCTCPReply(user_ptr, "\001PING %s\001", ping_arg);
+    }
+    if (!Strcmp(command, "VERSION")) {
+      SendCTCPReply(user_ptr, "\001VERSION %s\001", VERSION);
+    } 
+    if (!Strcmp(command, "TIME")) {
+      SendCTCPReply(user_ptr, "\001TIME %s\001", GetTime());
+    } 
+    if (!Strcmp(command, "FINGER")) {
+      SendCTCPReply(user_ptr, "\001FINGER %s\001", FINGER);
+    }
     return;
   }
 

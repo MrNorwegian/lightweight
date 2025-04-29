@@ -34,6 +34,6 @@
 void doversion(struct user *usr_ptr, char *tail)
 {
   NoticeToUser(usr_ptr, "L (minimalistic channel service for ircu P10 protocol)");
-  NoticeToUser(usr_ptr, "L Version 1.00  %s", __DATE__);
-  NoticeToUser(usr_ptr, "Copyright: Rasmus Have, David Mansell, Raimo Nikkilä and Fredrik Söderblom");
+  NoticeToUser(usr_ptr, "Version: %s", VERSION);
+  NoticeToUser(usr_ptr, "Original coders:: Rasmus Have, David Mansell, Raimo NikkilÃ¤ and Fredrik SÃ¸derblom");
 }

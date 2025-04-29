@@ -2,7 +2,7 @@
  *
  * lightweight - a minimalistic chanserv for ircu's p10-protocol
  *
- * copyright 2002 by Rasmus Have & Raimo Nikkilä & David Mansell
+ * copyright 2002 by Rasmus Have & Raimo NikkilÃ¤ & David Mansell
  *
  * $Id: general.c,v 1.20 2003/09/08 01:19:25 zarjazz Exp $
  *
@@ -165,6 +165,27 @@ char *StripBlanks(char *paddedstring)
   return (paddedstring);
 }
 
+/* Strips the CTCP control characters from the start and end of a string.
+ * Returns the pointer to the first non-CTCP char.
+ */
+char *StripCTCP(char *text) {
+  if (text[0] == '\001') {
+      text++;
+      char *end = text + strlen(text) - 1;
+      if (end >= text && *end == '\001') {
+          *end = '\0';
+      }
+  }
+  return text;
+}
+
+char *GetTime() {
+  static char time_str[64];
+  time_t now = time(NULL);
+  strftime(time_str, sizeof(time_str), "%Y-%m-%d %H:%M:%S", localtime(&now));
+  return time_str;
+}
+
 int CheckAuthLevel(struct user *user_ptr, unsigned char level)
 {
   if (user_ptr->authedas == NULL) {
@@ -196,6 +217,26 @@ void MessageToUser(struct user *user, char *message, ...)
 }
 
 void NoticeToUser(struct user *user, char *message, ...)
+{
+  char buf[512];
+  char buf2[512];
+  va_list val;
+  int buflen;
+
+  va_start(val, message);
+  vsnprintf(buf, 511, message, val);
+  va_end(val);
+
+  buflen = snprintf(buf2, 509, "%sAAA %s %s :%s", my_numeric, (user->oper > 1) ? "P" : "O", user->numeric, buf);
+  if (buflen > 509 || buflen < 0)
+    buflen = 509;
+
+  sprintf(buf2 + buflen, "\r\n");
+
+  SendLine(buf2);
+}
+
+void SendCTCPReply(struct user *user, char *message, ...)
 {
   char buf[512];
   char buf2[512];
